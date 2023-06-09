@@ -12,10 +12,16 @@ import {
 import { Payment } from './payments.entity';
 import { Tour } from 'src/tour/entities/tour.entity';
 
-@Entity()
+@Entity({
+  orderBy: {
+    id: 'DESC',
+  },
+})
 export class Reservation extends CoreEntity {
   @ManyToOne(() => Company, (company) => company.reservations, {
+    nullable: true,
     eager: true,
+    onDelete: 'SET NULL',
   })
   company: Company;
 
@@ -36,8 +42,11 @@ export class Reservation extends CoreEntity {
   @Column({ default: 0 })
   price: number;
 
-  @Column()
-  detail: string;
+  @Column({ default: 0 })
+  count: number;
+
+  @Column({ type: 'varchar' })
+  detail: any;
 
   @AfterLoad()
   setDetail(): void {

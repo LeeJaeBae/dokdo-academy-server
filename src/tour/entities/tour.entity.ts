@@ -47,17 +47,17 @@ export class Tour extends CoreEntity {
   @Column({ default: 4 })
   groupCount: number;
 
-  @OneToMany(() => Group, (group) => group.tour, { eager: true })
+  @OneToMany(() => Group, (group) => group.tour, {
+    eager: true,
+  })
   groups: Group[];
 
   @OneToMany(() => Reservation, (reservation) => reservation.tour, {
-    onDelete: 'CASCADE',
     eager: true,
   })
   reservations: Reservation[];
 
   @OneToMany(() => Payment, (payment) => payment.tour, {
-    onDelete: 'CASCADE',
     eager: true,
   })
   payments: Payment[];
@@ -79,19 +79,25 @@ export class Tour extends CoreEntity {
       this.paymentAmount = 0;
     }
 
-    if (this.payments) {
-      this.usedAmount = this.payments.reduce((acc, cur) => acc + cur.amount, 0);
-    } else {
-      this.usedAmount = 0;
-    }
+    // if (this.payments) {
+    //   this.usedAmount = this.payments.reduce((acc, cur) => acc + cur.amount, 0);
+    // } else {
+    //   this.usedAmount = 0;
+    // }
 
     if (this.reservations) {
       this.reservedAmount = this.reservations.reduce(
         (acc, cur) => acc + cur.price,
         0,
       );
+      this.usedAmount = this.reservations.reduce(
+        (acc, cur) => acc + (cur.receipt !== null ? cur.price : 0),
+        0,
+      );
+      console.log(this.usedAmount);
     } else {
       this.reservedAmount = 0;
+      this.usedAmount = 0;
     }
   }
 

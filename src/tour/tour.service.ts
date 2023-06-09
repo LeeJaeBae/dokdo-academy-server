@@ -98,13 +98,12 @@ export class TourService {
     try {
       const tour = await this.tourRepository.findOne({ where: { id: +id } });
       if (!tour || tour.id !== +id) {
-        console.log(tour.id == id);
         return {
           ok: false,
           error: '일정을 찾을 수 없습니다.',
         };
       }
-      await this.tourRepository.softRemove(tour);
+      await this.tourRepository.delete(tour.id);
       return {
         ok: true,
         message: '일정을 삭제하였습니다.',
@@ -218,6 +217,7 @@ export class TourService {
             }
             participant.hotel = hotel.name;
             participant.room = item['room'];
+            participant.index = +item['index'];
 
             participant.group = group;
             await this.participantRepository.save(participant);
@@ -301,6 +301,7 @@ export class TourService {
           );
           for (const key in participantsByRoom) {
             const participants = participantsByRoom[key];
+
             const detail = {
               room: key,
               participants,
@@ -345,7 +346,6 @@ export class TourService {
         data: reloadTour,
       };
     } catch (error) {
-      console.log(error);
       return {
         ok: false,
         error: '그룹을 생성할 수 없습니다.',
@@ -463,7 +463,7 @@ export class TourService {
       }
 
       const update = await this.tourRepository.merge(tour, { paymentAmount });
-      console.log(update.paymentAmount);
+
       await this.tourRepository.save(update);
 
       return {

@@ -1,5 +1,12 @@
 import { CoreEntity } from 'src/lib/entities/core.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  AfterLoad,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Participant } from './participant.entity';
 import { Tour } from './tour.entity';
 
@@ -22,8 +29,6 @@ export class Group extends CoreEntity {
   @Column()
   tourId: number;
 
-  @OneToMany(() => Participant, (participant) => participant.group, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Participant, (participant) => participant.group)
   participants: Participant[];
 }
